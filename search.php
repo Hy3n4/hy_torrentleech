@@ -52,9 +52,6 @@ class SynoDLMSearchHYTorrentLeech {
 	public function VerifyAccount($username, $password) {
 		$ret = TRUE;
 
-		// $this->DebugLog("Username: " . $username);
-		// $this->DebugLog("Password: " . $password);
-		// $this->DebugLog("Login URL: " . $this->lurl);
 		if (file_exists($this->COOKIE)) {
 				$this->DebugLog("Removing COOKIE file.");
 				unlink($this->COOKIE);
@@ -128,22 +125,153 @@ class SynoDLMSearchHYTorrentLeech {
 			return $size;
 		}
 	}
-
+	/**
+	 * Returns a string of category
+	 * 
+	 * @param categoryId 	category id (e.g. 1)
+	 * @return string 		translated category string
+	 */
 	private function parseCategory($categoryId) {
+		// TODO We could implement function to parse response HTML source code and pick theese by regex.
 		switch ($categoryId) {
+			case '1':
+				return 'Movies';
+				break;
+			case '8':
+				return 'Movies::Cam';
+				break;
+			case '9':
+				return 'Movies::TS/TC';
+				break;
+			case '11':
+				return 'Movies::DVDRip/DVDScreener';
+				break;
+			case '12':
+				return 'Movies::DVD-R';
+				break;
+			case '13':
+				return 'Movies::Bluray';
+				break;
+			case '14':
+				return 'Movies::BlurayRip';
+				break;
+			case '15':
+				return 'Movies::Boxsets';
+				break;
+			case '29':
+				return 'Movies::Documentaries';
+				break;
+			case '36':
+				return 'Movies::Foreign';
+				break;
+			case '37':
+				return 'Movies::WEBRip';
+				break;
+			case '43':
+				return 'Movies::HDRip';
+				break;
+			case '47':
+				return 'Movies::4K';
+				break;
+			case '2':
+				return 'TV';
+				break;
 			case '26':
 				return 'TV::Episodes';
 				break;
 			case '27':
-				return 'TV::Boxsets';
+				return 'TV::BoxSets';
 				break;
 			case '32':
 				return 'TV::Episodes HD';
 				break;
-				
-			default:
-				return 'Unknown Category';
+			case '44':
+				return 'TV::Foreign';
 				break;
+			case '3':
+				return 'Games';
+				break;
+			case '17':
+				return 'Games::PC';
+				break;
+			case '18':
+				return 'Games::XBOX';
+				break;
+			case '19':
+				return 'Games::XBOX360';
+				break;
+			case '20':
+				return 'Games::PS2';
+				break;
+			case '21':
+				return 'Games::PS3';
+				break;
+			case '22':
+				return 'Games::PSP';
+				break;
+			case '28':
+				return 'Games::Wii';
+				break;
+			case '30':
+				return 'Games::Nintendo DS';
+				break;
+			case '39':
+				return 'Games::PS4';
+				break;
+			case '40':
+				return 'Games::XBOXONE';
+				break;
+			case '42':
+				return 'Games::Mac';
+				break;
+			case '48':
+				return 'Games::Nintendo Switch';
+				break;
+			case '4':
+				return 'Music';
+				break;
+			case '16':
+				return 'Music::Music Videos';
+				break;
+			case '31':
+				return 'Music::Audio';
+				break;
+			case '5':
+				return 'Books';
+				break;
+			case '45':
+				return 'Books::EBooks';
+				break;
+			case '46':
+				return 'Books::Comics';
+				break;
+			case '6':
+				return 'Applications';
+				break;
+			case '23':
+				return 'Applications::PC-ISO';
+				break;
+			case '24':
+				return 'Applications::Mac';
+				break;
+			case '25':
+				return 'Applications::Mobile';
+				break;
+			case '33':
+				return 'Applications::0-day';
+				break;
+			case '7':
+				return 'Animation';
+				break;
+			case '34':
+				return 'Animation::Anime';
+				break;
+			case '35':
+				return 'Animation::Cartoons';
+				break;
+			case '38':
+				return 'Animation::Education';
+				break;			
 		}
 	}
 
@@ -153,11 +281,8 @@ class SynoDLMSearchHYTorrentLeech {
 
 	public function parse($plugin, $response) {
 		
-		//$this->DebugLog("Parsing response:\n" . $response);
 		$resArr = json_decode($response, TRUE);
 		$debugArr = print_r($resArr['torrentList'], TRUE);
-		//$this->DebugLog($debugArr);
-		//$this->DebugLog("TorrentList: " . count($resArr['torrentList']));
 		$res = 0;
 		foreach ($resArr['torrentList'] as $torrent) {
 			$title="Unknown title";
@@ -169,14 +294,13 @@ class SynoDLMSearchHYTorrentLeech {
 			$seeds=0; 
 			$leechs=0;
 			$category="Unknown category";
-			//$this->DebugLog(sprintf($this->$durl, $torrent['fid'], $torrent['filename']));
+
 			$title = $torrent['name'];
-			//$download = getDownloadlink($torrent['fid'], $torrent['filename']);
 			$download = $this->durl . $torrent['fid'] . "/" . $torrent['filename'];
 			$hash = md5($download);
 			$page = $this->wurl . "/torrent/" . $torrent['fid'];
 			$size = $this->sizeInBytes($torrent['size']);
-			$datetime = date('Y-m-d',strtotime($torrent['dateAdded']));
+			$datetime = date('Y-m-d',strtotime($torrent['addedTimestamp']));
 			$seeds = $torrent['seeders'];
 			$leechs = $torrent['leechers'];
 			$category = $this->parseCategory($torrent['categoryID']);
