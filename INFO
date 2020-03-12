@@ -1,0 +1,12 @@
+{
+"name": "hy_torrentleech",
+"displayname": "TorrentLeech.Org",
+"description": "TorrentLeech Private Tracker",
+"version": "0.1",
+"accountsupport": true,
+"site": "https://www.torrentleech.org",
+"hostprefix": "torrentleech.org",
+"module": "search.php",
+"type": "search",
+"class": "SynoDLMSearchHYTorrentLeech"
+}
