@@ -125,6 +125,7 @@ class SynoDLMSearchHYTorrentLeech {
 			return $size;
 		}
 	}
+	
 	/**
 	 * Returns a string of category
 	 * 
@@ -280,7 +281,6 @@ class SynoDLMSearchHYTorrentLeech {
 	}
 
 	public function parse($plugin, $response) {
-		
 		$resArr = json_decode($response, TRUE);
 		$debugArr = print_r($resArr['torrentList'], TRUE);
 		$res = 0;
@@ -307,11 +307,7 @@ class SynoDLMSearchHYTorrentLeech {
 			$plugin->addResult($title, $download, $size, $datetime, $page, $hash, $seeds, $leechs, $category);
 			$res++;
 		}
-		
-		$this->DebugLog("Count: " . $res);
-
 		return $res;
-		
 	}
 }
 ?>
